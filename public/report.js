@@ -232,16 +232,16 @@ function calculateHeaderHeight(data) {
            </div>
  
            <div class="flex justify-between p-2 bg-[#cafbfb] text-[#023b3b] rounded-t-xl my-2">
-              <div class="w-4/5 text-sm font-bold ml-1">
+              <div class="w-[40%] text-sm font-bold ml-1">
                  TEST NAME
               </div>
-              <div class="w-2/5 text-sm font-bold">
+              <div class="w-[16%] text-sm font-bold">
                  RESULT / UNITS
               </div>
-              <div class="w-2/5 text-center text-sm font-bold">
+              <div class="w-[8%] text-center text-sm font-bold flex justify-center">
                  DELTA
               </div>
-              <div class="w-4/5 text-sm font-bold">
+              <div class="w-[36%] text-sm font-bold flex justify-end">
                  BIOLOGICAL REFERENCE INTERVAL
               </div>
            </div>
@@ -325,8 +325,8 @@ function calculateHeaderHeight(data) {
                                 test.testName
                              }</div>
                           </div>
-                          <div class="flex gap-2 items-center w-[20%] text-sm font-normal">
-                             <span class=" font-medium text-base ml-3  ${
+                          <div class="flex flex-wrap gap-2 items-center w-[16%] text-sm font-normal ml-1">
+                             <span class=" font-medium text-base  ${
                                 test.abnormalFlag == "AN"
                                    ? "text-black"
                                    : "text-red-500"
@@ -336,7 +336,7 @@ function calculateHeaderHeight(data) {
                              <div class="text-base font-normal">${test.uom}</div>
                           </div>
                           <div
-                             class="flex flex-col w-[10%]  justify-center"
+                             class="flex flex-col w-[8%]  justify-center"
                           >
                              <div class="h-6 flex justify-center">
                                 ${
@@ -351,7 +351,7 @@ function calculateHeaderHeight(data) {
                           </div>
  
  
-                          <div class="flex flex-col items-end gap-1 w-[30%] text-base font-normal py-[1px] mr-2">
+                          <div class="flex flex-col gap-1 w-[30%] text-base font-normal py-[1px] mr-2">
                              <div id="arrow${
                                 index + 1
                              }" style='margin-left : ${arrowPosition}px' >
@@ -561,15 +561,15 @@ function calculateHeaderHeight(data) {
             </div>
             <div class="text-sm font-medium">${test.testName}</div>
         </div>
-        <div class="flex gap-2 items-center w-[20%] text-sm font-normal">
-            <span class=" font-medium text-base ml-3  ${
+        <div class="flex flex-wrap gap-2 items-center w-[16%] text-sm font-normal ml-1">
+            <span class=" font-medium text-base  ${
                test.abnormalFlag == " AN" ? "text-black" : "text-red-500"
             }">
                 ${test.labResult}
             </span>
             <div class="text-base font-normal">${test.uom}</div>
         </div>
-        <div class="flex flex-col  w-[10%]  justify-center">
+        <div class="flex flex-col  w-[8%]  justify-center">
             <div class="h-6 flex justify-center">
                 ${test.deltaFlag ? deltaImg[`${test.deltaFlag}`] : ""}
             </div>
