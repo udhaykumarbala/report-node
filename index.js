@@ -1,9 +1,10 @@
 const express = require('express');
+const puppeteer = require('puppeteer');
 const app = express();
 const port = 8080;
 
 // Middleware to parse JSON bodies
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 
 // Function that takes a JSON object and returns an HTML string
 function jsonToHtml(json) {
@@ -32,6 +33,7 @@ function jsonToHtml(json) {
    <!-- <link rel="stylesheet" href="./dist/output.css" /> -->
    <script src="https://cdn.tailwindcss.com"></script>
    <script src="./report.js"></script>
+   <!-- <script src="../temp/pageSizeTeas.js"></script> -->
    <title>Report Convertion Table</title>
 
    <!-- <style>
@@ -47,8 +49,6 @@ function jsonToHtml(json) {
 
       <h2 class="text-3xl font-bold text-center p-4">Test Report</h2>
 
-      
-
       <div class="flex justify-center p-7 gap-10">
 
          <button id="download" class="text-base text-white bg-sky-600 px-4 py-2 rounded-md">
@@ -56,8 +56,7 @@ function jsonToHtml(json) {
          </button>
       </div>
 
-      <div id="content"
-         class="px-10 w-[794px] h-[1123p] flex flex-col rounded-xl container mx-auto shadow-2xl"></div>
+      <div id="content" class="px-10 w-[794px] h-[1123p] flex flex-col rounded-xl container mx-auto shadow-2xl"></div>
 
 
 
@@ -186,22 +185,22 @@ function jsonToHtml(json) {
          const pdfData = generate_report(headerData, reportData, header)
          // console.log("pdfData", pdfData)
 
-         const dummy = generateWithoutBar({
-            height: 30,
-            "testName": "vijayvijayvijayvijayvijay vijayutsflty",
-            "labResult": "20",
-            "uom": "",
-            "abnormalFlag": "",
-            "abnormalFromValue": 10,
-            "abnormalToValue": 50,
-            "deltaPer": 0,
-            "deltaFlag": "HR",
-            "diffDiagnosis": "",
-            "diffDiagnosisImg": "",
-            "historical": [],
-            "key": "Name",
-            "value": "SERO PROFILE ",
-         })
+         // const dummy = generateDiff({
+         //    height: 30,
+         //    "testName": "vijayvijayvijayvijayvijay vijayutsflty",
+         //    "labResult": "20",
+         //    "uom": "",
+         //    "abnormalFlag": "",
+         //    "abnormalFromValue": 10,
+         //    "abnormalToValue": 50,
+         //    "deltaPer": 0,
+         //    "deltaFlag": "HR",
+         //    "diffDiagnosis": "Diagnosis",
+         //    "diffDiagnosisImg": "",
+         //    "historical": [],
+         //    "key": "Name",
+         //    "value": "SERO PROFILE ",
+         // })
          // const dummy = generateTitle({
          // "componentType": "title",
          // "value": "SERO PROFILE - 1",
@@ -340,9 +339,8 @@ function jsonToHtml(json) {
          let html = "";
          let newHeight = 0;
          let footerHeight = 0
-         let pageHeight = 287;
+         let pageHeight = 283;
          let currentPageHeight = pageHeight - header.height
-         console.log("currentPageHeight-Before", header.height)
 
          const flattenedHeaderData = headerData.flat();
          const flattenedReportData = reportData.flat()
@@ -367,8 +365,6 @@ function jsonToHtml(json) {
             let newHeight = currentPageHeight - componentHeight;
 
             if (newHeight <= 0) {
-               console.log("newHeight", componentHeight)
-               console.log("currentPageHeight-After", currentPageHeight)
                html += generateEmptyComponent(currentPageHeight)
                html += footerData[1];
                html += generatePageNoComponent(page);
@@ -382,6 +378,10 @@ function jsonToHtml(json) {
             currentPageHeight -= componentHeight;
          })
 
+         html += generateEmptyComponent(currentPageHeight)
+         html += footerData[1];
+         html += generatePageNoComponent(page);
+         page++;
 
          return html
 
@@ -406,8 +406,33 @@ function jsonToHtml(json) {
                },
             })
             .from(document.getElementById("content"))
-
             .save();
+
+            // puppeter code
+            html2pdf()
+            .set({
+               pagebreak: { after: '.pageBreak' },
+               html2canvas: {
+                  scale: 2, // Increase scale for better resolution
+                  logging: true, // Enable logging for debugging
+                  useCORS: true, // Use CORS to load images from different domains
+               },
+               filename: "report.pdf",
+               jsPDF: {
+                  unit: "mm",
+                  format: ["210", "297"],
+               },
+            })
+            .from(document.getElementById("content")).toPdf().outputPdf().then(function(pdf) {
+               // Send the PDF data back to the server
+               fetch('/receive-pdf', {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json'
+                   },
+                   body: JSON.stringify({ pdfData: pdf })
+               });
+           });
       });
    </script>
     `;
@@ -465,6 +490,49 @@ app.post('/render', (req, res) => {
     console.log(JSONData);
     const htmlString = jsonToHtml(JSON.stringify(JSONData));
     res.send(htmlString);
+});
+
+// Route to receive HTML content and render it to PDF using Puppeteer
+app.post('/generate-pdf', async (req, res) => {
+   const jsonObject = req.body;
+   const JSONData = jsonObject.jsonData;
+   const htmlString = jsonToHtml(JSON.stringify(JSONData));
+
+   try {
+       const browser = await puppeteer.launch(
+       );
+       const page = await browser.newPage();
+       await page.setContent(htmlString, { waitUntil: 'networkidle0' });
+
+       // Intercept the request to receive the PDF data
+       page.on('request', interceptedRequest => {
+           if (interceptedRequest.url().endsWith('/receive-pdf')) {
+               interceptedRequest.continue((response) => {
+                   const pdfData = response.body().pdfData;
+                   const base64PDF = Buffer.from(pdfData, 'binary').toString('base64');
+                   res.send({ base64PDF });
+               });
+           } else {
+               interceptedRequest.continue();
+           }
+       });
+
+       // Click the download button to trigger the PDF generation
+       await page.click('#download');
+
+       await page.waitForResponse(response => response.url().endsWith('/receive-pdf') && response.status() === 200);
+       await browser.close();
+
+   } catch (error) {
+       console.error('Error generating PDF:', error);
+       res.status(500).send('Error generating PDF');
+   }
+});
+
+// Route to receive PDF data (from the HTML page)
+app.post('/receive-pdf', (req, res) => {
+   const pdfData = req.body.pdfData;
+   res.send(pdfData);
 });
 
 // serve static files
