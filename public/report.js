@@ -15,31 +15,25 @@ function calculateHeaderHeight(data) {
     const pageHeight = 297;
     let totalHeight = 0;
     if (data.componentType == "title") {
-       totalHeight += pageHeight / 26;
+       totalHeight += pageHeight / 30;
     } else if (data.componentType == "testReport") {
        if (data.abnormalFromValue === 0 && data.abnormalToValue === 0) {
-          totalHeight += pageHeight / 16;
+          totalHeight += pageHeight / 28;
        }
-       // if (
-       //    data.abnormalFromValue === 0 &&
-       //    data.abnormalToValue === 0 &&
-       //    data.testName.length > 35
-       // ) {
-       //    totalHeight += pageHeight / 18.8;
-       // }
+ 
        if (data.abnormalFromValue !== 0 && data.abnormalToValue !== 0) {
-          totalHeight += pageHeight / 16;
+          totalHeight += pageHeight / 17;
        }
  
        if (data.diffDiagnosis) {
-          totalHeight += pageHeight / 14.8;
+          totalHeight += pageHeight / 14.9;
        }
        if (data.interpretation) {
-          totalHeight += pageHeight / 14.8;
+          totalHeight += pageHeight / 14.9;
        }
  
        if (data.historical?.length > 1) {
-          totalHeight += pageHeight / 5.5;
+          totalHeight += pageHeight / 6.2;
        }
     }
     // console.log("CompHeight", totalHeight);
@@ -133,12 +127,21 @@ function calculateHeaderHeight(data) {
     }
  }
  
- function generateKeyValueComponent(key, value) {
+ function generateKeyValueComponent(
+    key,
+    value,
+    className,
+    keyClass,
+    valueClass
+ ) {
     return `
-        <div class="my-">
-           <div class="flex">
-              <h5 class="text-sm flex-0 w-[40%] font-semibold">${key}</h5>
-              <h6 class="text-sm flex-1 font-medium">: ${value}</h6>
+        <div class=" ${className}">
+           <div class="flex ">
+              <h5 class="text-[0.685rem] flex-0 ${keyClass} font-normal">${key}</h5>
+              <div class="flex flex-1 justify-between gap-1">
+                <span class="text-[0.685rem] font-semibold ">:</span>
+                <h6 class="text-[0.685rem] flex-1 font-semibold ${valueClass}">${value}</h6>
+              </div>
            </div>
         </div>
         `;
@@ -146,14 +149,14 @@ function calculateHeaderHeight(data) {
  
  function generateHeaderImageComponent(url, height) {
     return `
-        <div class=" py-1">
+        <div class=" pb-1 pt-2">
            <img src=${url} alt="header" style="height: ${height}px;" class="w-full overflow-hidden  bg-gradient-to-r from-red-300 via-green-300 to-yellow-500" />
            </div>
         `;
  }
  function generateFooterImageComponent(url, height) {
     // return ``;
-    return `<div class="py-1">
+    return `<div class="py-1 pageBreak">
         <img src=${url} alt="header" style="height: ${height}px;" class="w-full overflow-hidden  bg-gradient-to-r from-red-300 via-green-300 to-yellow-500" />
            </div>
         `;
@@ -161,8 +164,8 @@ function calculateHeaderHeight(data) {
  
  function generatePageNoComponent(pageNo) {
     return `
-        <div class="flex justify-center pageBreak">
-           ${pageNo}
+        <div class="flex justify-end">
+           Page ${pageNo}
         </div>
         `;
  }
@@ -193,15 +196,15 @@ function calculateHeaderHeight(data) {
         </div>`;
  }
  
- function generateTitleComponent(value, color, logo) {
+ function generateTitleComponent(value, color, icon) {
     return `
         <div class="flex gap-2 items-center my- py-1">
            ${
-              logo
-                 ? `<img src="${logo}"  style="width: 28px; height: 28px" />`
+              icon
+                 ? `<img src="${icon}"  style="width: 28px; height: 28px" />`
                  : ""
            }
-           <h3 style="color:${color}" class="text-lg  font-semibold">${value}</h3>
+           <h3 style="color:${color}" class="text-[0.875rem]  font-semibold">${value}</h3>
         </div>`;
  }
  
@@ -235,16 +238,16 @@ function calculateHeaderHeight(data) {
            </div>
  
            <div class="flex justify-between p-2 bg-[#cafbfb] text-[#023b3b] rounded-t-xl my-2">
-              <div class="w-[40%] text-sm font-bold ml-1">
+              <div class="w-[40%] text-[0.685rem] font-bold ml-1">
                  TEST NAME
               </div>
-              <div class="w-[16%] text-sm font-bold">
+              <div class="w-[16%] text-[0.685rem] font-bold">
                  RESULT / UNITS
               </div>
-              <div class="w-[8%] text-center text-sm font-bold flex justify-center">
+              <div class="w-[14%] text-center text-[0.685rem] font-bold flex justify-center">
                  DELTA
               </div>
-              <div class="w-[36%] text-sm font-bold flex justify-end">
+              <div class="w-[30%] text-[0.685rem] font-bold flex justify-end">
                  BIOLOGICAL REFERENCE INTERVAL
               </div>
            </div>
@@ -276,17 +279,17 @@ function calculateHeaderHeight(data) {
  
     // tests?.forEach((test, index) => {
     let deltaImg = {
-       HR: `<svg fill="#f20202" height="30" width="30" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 19h18a1.002 1.002 0 0 0 .823-1.569l-9-13c-.373-.539-1.271-.539-1.645 0l-9 13A.999.999 0 0 0 3 19z"></path></g></svg>`,
+       HR: `<svg fill="#f20202" height="20" width="20" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 19h18a1.002 1.002 0 0 0 .823-1.569l-9-13c-.373-.539-1.271-.539-1.645 0l-9 13A.999.999 0 0 0 3 19z"></path></g></svg>`,
  
-       LR: `<svg fill="#f20202" height="30" width="30" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, -1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 19h18a1.002 1.002 0 0 0 .823-1.569l-9-13c-.373-.539-1.271-.539-1.645 0l-9 13A.999.999 0 0 0 3 19z"></path></g></svg>`,
+       LR: `<svg fill="#f20202" height="20" width="20" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, -1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 19h18a1.002 1.002 0 0 0 .823-1.569l-9-13c-.373-.539-1.271-.539-1.645 0l-9 13A.999.999 0 0 0 3 19z"></path></g></svg>`,
     };
  
     let abnormalImg = {
-       AH: `<svg fill="#fa0000" height="25" width="30" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512" xml:space="preserve" stroke="#fa0000" transform="matrix(-1, 0, 0, 1, 0, 0)" stroke-width="17.919999999999998"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="1.024"></g><g id="SVGRepo_iconCarrier"> <polygon points="245,0 74.3,213.3 202.3,213.3 202.3,512 287.7,512 287.7,213.3 415.7,213.3 "></polygon> </g></svg>`,
+       AH: `<svg fill="#fa0000" height="18" width="20" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512" xml:space="preserve" stroke="#fa0000" transform="matrix(-1, 0, 0, 1, 0, 0)" stroke-width="17.919999999999998"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="1.024"></g><g id="SVGRepo_iconCarrier"> <polygon points="245,0 74.3,213.3 202.3,213.3 202.3,512 287.7,512 287.7,213.3 415.7,213.3 "></polygon> </g></svg>`,
  
-       AN: `<svg fill="#008000" height="25" width="30" viewBox="-25.6 -25.6 307.20 307.20" id="Flat" xmlns="http://www.w3.org/2000/svg" stroke="#008000" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M232,128A104,104,0,1,1,128,24,104.12041,104.12041,0,0,1,232,128Z"></path> </g></svg>`,
+       AN: `<svg fill="#008000" height="18" width="20" viewBox="-25.6 -25.6 307.20 307.20" id="Flat" xmlns="http://www.w3.org/2000/svg" stroke="#008000" transform="matrix(-1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M232,128A104,104,0,1,1,128,24,104.12041,104.12041,0,0,1,232,128Z"></path> </g></svg>`,
  
-       AL: `<svg fill="#f80d0d" height="25" width="30" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512" xml:space="preserve" stroke="#f80d0d" stroke-width="19.456" transform="matrix(-1, 0, 0, -1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="1.024"></g><g id="SVGRepo_iconCarrier"> <polygon points="245,0 74.3,213.3 202.3,213.3 202.3,512 287.7,512 287.7,213.3 415.7,213.3 "></polygon> </g></svg>`,
+       AL: `<svg fill="#f80d0d" height="18" width="20" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512" xml:space="preserve" stroke="#f80d0d" stroke-width="19.456" transform="matrix(-1, 0, 0, -1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="1.024"></g><g id="SVGRepo_iconCarrier"> <polygon points="245,0 74.3,213.3 202.3,213.3 202.3,512 287.7,512 287.7,213.3 415.7,213.3 "></polygon> </g></svg>`,
     };
  
     if (test.abnormalFlag == "") {
@@ -294,10 +297,8 @@ function calculateHeaderHeight(data) {
     }
  
     const arrowPosition = lineChartContent(
-       0,
        test.abnormalFromValue,
        test.abnormalToValue,
-       128,
        test.labResult
     );
  
@@ -305,15 +306,9 @@ function calculateHeaderHeight(data) {
     const toValue = test?.abnormalToValue;
  
     html += `
-                 ${
-                    test?.componentType == "empty"
-                       ? `
-                 <div class="flex p-10 mb-3 w-full"></div>
-                 `
-                       : `
                  <div class="test-report" data-index="${index}">
                     <div class="flex flex-col mb-1">
-                       <div class="flex justify-between bg-[#f0f6fb] py-1 px-2 h-[64px]  ${
+                       <div class="flex justify-between bg-[#f0f6fb] py-1 px-2 h-[64p]  ${
                           test.testName.length > 34 ? "" : ""
                        }">
                           <div class="flex w-[40%] items-center py-1 gap-1">
@@ -324,24 +319,26 @@ function calculateHeaderHeight(data) {
                                       : ""
                                 }
                              </div>
-                             <div class="text-sm font-medium">${
+                             <div class="text-[0.685rem] font-medium">${
                                 test.testName
                              }</div>
                           </div>
-                          <div class="flex flex-wrap gap-2 items-center w-[16%] text-sm font-normal ml-1">
-                             <span class=" font-medium text-base  ${
+                          <div class="flex flex-wrap gap-2 items-center w-[16%]  font-normal ml-1">
+                             <span class=" font-medium text-sm  ${
                                 test.abnormalFlag == "AN"
                                    ? "text-black"
                                    : "text-red-500"
                              }">
                                 ${test.labResult}
                              </span>
-                             <div class="text-base font-normal">${test.uom}</div>
+                             <div class="text-[0.685rem] font-normal">${
+                                test.uom
+                             }</div>
                           </div>
                           <div
-                             class="flex flex-col w-[8%]  justify-center"
+                             class="flex flex-col w-[14%]  justify-center"
                           >
-                             <div class="h-6 flex justify-center">
+                             <div class="h-6 flex justify-center items-center">
                                 ${
                                    test.deltaFlag
                                       ? deltaImg[`${test.deltaFlag}`]
@@ -354,71 +351,73 @@ function calculateHeaderHeight(data) {
                           </div>
  
  
-                          <div class="flex flex-col gap-1 w-[30%] text-base font-normal py-[1px] mr-">
-                             <div id="arrow${
-                                index + 1
-                             }" style='margin-left : ${arrowPosition}px' >
-                                <svg
-                                   fill="#1b5e20"
-                                   height="20"
-                                   width="20"
-                                   version="1.1"
-                                   id="Layer_1"
-                                   xmlns="http://www.w3.org/2000/svg"
-                                   xmlns:xlink="http://www.w3.org/1999/xlink"
-                                   viewBox="-51.2 -51.2 614.40 614.40"
-                                   xml:space="preserve"
-                                   stroke="#1b5e20"
-                                >
-                                   <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                   <g
-                                      id="SVGRepo_tracerCarrier"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                   ></g>
-                                   <g id="SVGRepo_iconCarrier">
-                                      <g>
-                                         <g>
-                                            <path
-                                               d="M509.144,2.16c-2.884-2.56-7.125-2.876-10.351-0.759l-242.79,159.07L13.212,1.401C9.995-0.715,5.746-0.4,2.861,2.16 c-2.876,2.56-3.686,6.741-1.963,10.189l247.467,494.933c1.451,2.893,4.403,4.719,7.637,4.719c3.234,0,6.187-1.826,7.637-4.719 L511.107,12.349C512.83,8.902,512.02,4.72,509.144,2.16z"
-                                            ></path>
-                                         </g>
-                                      </g>
-                                   </g>
-                                </svg>
-                             </div>
-                             <div class="flex gap-0.5">
-                                <div class="w-6  h-2 bg-red-600 rounded-l-lg"></div>
-                                <div class="w-32  h-2 bg-green-800"></div>
-                                <div class="w-6  h-2 bg-red-600 rounded-r-lg"></div>
-                             </div>
-                             <div class="flex pb-2 mr-6">
-                                <div class="w-11">
+                          <div class="flex gap-1 w-[30%] text-base font-normal py-[1px] justify-end">
+                            <div class="flex flex-col w-[85%]">
+                            <div id="arrow${
+                               index + 1
+                            }" style='margin-left : ${arrowPosition}px' >
+                               <svg
+                                  fill="#1b5e20"
+                                  height="20"
+                                  width="20"
+                                  version="1.1"
+                                  id="Layer_1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                                  viewBox="-51.2 -51.2 614.40 614.40"
+                                  xml:space="preserve"
+                                  stroke="#1b5e20"
+                               >
+                                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                  <g
+                                     id="SVGRepo_tracerCarrier"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                  ></g>
+                                  <g id="SVGRepo_iconCarrier">
+                                     <g>
+                                        <g>
+                                           <path
+                                              d="M509.144,2.16c-2.884-2.56-7.125-2.876-10.351-0.759l-242.79,159.07L13.212,1.401C9.995-0.715,5.746-0.4,2.861,2.16 c-2.876,2.56-3.686,6.741-1.963,10.189l247.467,494.933c1.451,2.893,4.403,4.719,7.637,4.719c3.234,0,6.187-1.826,7.637-4.719 L511.107,12.349C512.83,8.902,512.02,4.72,509.144,2.16z"
+                                           ></path>
+                                        </g>
+                                     </g>
+                                  </g>
+                               </svg>
+                            </div>
+                            <div class="flex gap-1">
+                               <div class="w-6  h-2 bg-red-600 rounded-l-lg"></div>
+                               <div class="w-32  h-2 bg-green-800"></div>
+                               <div class="w-6  h-2 bg-red-600 rounded-r-lg"></div>
+                            </div>
+                            <div class="flex pb-2 mr-6">
+                               <div class="w-11">
  
-                                </div>
-                                <div class="w-[60px] h-2 flex justify-between ">
-                                   <div class="ml-[-30px]">
-                                      ${
-                                         test.abnormalFromValue == "0" &&
-                                         test.abnormalToValue == "0"
-                                            ? ""
-                                            : test.abnormalFromValue
-                                      }
-                                   </div>
-                                   <div class="mr-[-55px]">
-                                      ${
-                                         test.abnormalFromValue == "0" &&
-                                         test.abnormalToValue == "0"
-                                            ? ""
-                                            : test.abnormalToValue
-                                      }
-                                   </div>
-                                </div>
-                                <div class="w-11 ">
+                               </div>
+                               <div class="w-[60px] h-2 flex justify-between ">
+                                  <div class="text-[0.685rem] ml-[-25px]">
+                                     ${
+                                        test.abnormalFromValue == "0" &&
+                                        test.abnormalToValue == "0"
+                                           ? ""
+                                           : test.abnormalFromValue
+                                     }
+                                  </div>
+                                  <div class="text-[0.685rem] mr-[-53px]">
+                                     ${
+                                        test.abnormalFromValue == "0" &&
+                                        test.abnormalToValue == "0"
+                                           ? ""
+                                           : test.abnormalToValue
+                                     }
+                                  </div>
+                               </div>
+                               <div class="w-11 ">
  
-                                </div>
-                             </div>
-                          </div>
+                               </div>
+                            </div>
+                         </div>
+                            </div>
                           
                  
  
@@ -431,25 +430,25 @@ function calculateHeaderHeight(data) {
                                 ? `
                           <div class="flex justify-center">
                              <div
-                                class="p-3 w-[800px] h-[200px] flex justify-center"
+                                class="p-3 w-[800px] h-[180px] flex justify-center"
                                 id="chartContainer${index - 0 + 1}"
                              ></div>
                           </div>
                           `
                                 : ""
                           } ${
-                            test.diffDiagnosis
-                               ? `
+       test.diffDiagnosis
+          ? `
                           <div
                              class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg"
                           >
                              <div class="">
                                 <div class="flex w-full gap-2">
                                    
-                                   <div class="   w-2/5  text-base font-medium">
+                                   <div class="   w-2/5  text-sm font-medium">
                                       Differential Diagnosis:
                                    </div>
-                                   <div class="w-full ">${
+                                   <div class="w-full text-sm ">${
                                       test?.diffDiagnosis
                                    }</div>
                                 </div>
@@ -469,8 +468,8 @@ function calculateHeaderHeight(data) {
                              }
                           </div>
                           `
-                               : ``
-                         }
+          : ``
+    }
  
                          ${
                             test.interpretation
@@ -481,10 +480,10 @@ function calculateHeaderHeight(data) {
                              <div class="">
                                 <div class="flex w-full gap-2">
                                    
-                                   <div class="   w-2/5  text-base font-medium">
+                                   <div class="   w-2/5  text-sm font-medium">
                                    Interpretation:
                                    </div>
-                                   <div class="w-full ">${
+                                   <div class="w-full text-sm">${
                                       test?.interpretation
                                    }</div>
                                 </div>
@@ -509,8 +508,7 @@ function calculateHeaderHeight(data) {
                        </div>
                     </div>
                  </div>
-        `
-                 } `;
+        `;
  
     // });
  
@@ -522,7 +520,7 @@ function calculateHeaderHeight(data) {
  
     // tests.forEach((test, index) => {
     let deltaImg = {
-       HR: `<svg fill="#f20202" height="30" width="30" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg"
+       HR: `<svg fill="#f20202" height="20" width="20" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg"
  stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, 1, 0, 0)">
  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -532,7 +530,7 @@ function calculateHeaderHeight(data) {
  </g>
  </svg>`,
  
-       LR: `<svg fill="#f20202" height="30" width="30" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg"
+       LR: `<svg fill="#f20202" height="20" width="20" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg"
  stroke="#f20202" stroke-width="0.00024000000000000003" transform="matrix(-1, 0, 0, -1, 0, 0)">
  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -544,7 +542,7 @@ function calculateHeaderHeight(data) {
     };
  
     let abnormalImg = {
-       AH: `<svg fill="#fa0000" height="25" width="30" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+       AH: `<svg fill="#fa0000" height="18" width="20" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512"
  xml:space="preserve" stroke="#fa0000" transform="matrix(-1, 0, 0, 1, 0, 0)" stroke-width="17.919999999999998">
  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -555,7 +553,7 @@ function calculateHeaderHeight(data) {
  </g>
  </svg>`,
  
-       AN: `<svg fill="#008000" height="25" width="30" viewBox="-25.6 -25.6 307.20 307.20" id="Flat"
+       AN: `<svg fill="#008000" height="18" width="20" viewBox="-25.6 -25.6 307.20 307.20" id="Flat"
  xmlns="http://www.w3.org/2000/svg" stroke="#008000" transform="matrix(-1, 0, 0, 1, 0, 0)">
  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -564,7 +562,7 @@ function calculateHeaderHeight(data) {
  </g>
  </svg>`,
  
-       AL: `<svg fill="#f80d0d" height="25" width="30" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+       AL: `<svg fill="#f80d0d" height="18" width="20" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-51.2 -51.2 614.40 614.40" enable-background="new 0 0 512 512"
  xml:space="preserve" stroke="#f80d0d" stroke-width="19.456" transform="matrix(-1, 0, 0, -1, 0, 0)">
  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -584,123 +582,127 @@ function calculateHeaderHeight(data) {
     const toValue = test?.abnormalToValue;
  
     html += `
- ${
-    test?.componentType == "empty"
-       ? `
- <div class="flex p-10 mb-3 w-full"></div>
- `
-       : `
- <div class="test-report" data-index="${index}">
- <div class="flex flex-col mb-1">
-    <div class="flex justify-between bg-[#f0f6fb] py-[3px] px-2 h-[62px]">
-        <div class="flex w-[40%] items-center py-1 gap-1">
-            <div>
-                ${test.abnormalFlag ? abnormalImg[`${test.abnormalFlag}`] : ""}
-            </div>
-            <div class="text-sm font-medium">${test.testName}</div>
-        </div>
-        <div class="flex flex-wrap gap-2 items-center w-[16%] text-sm font-normal ml-1">
-            <span class=" font-medium text-base  ${
-               test.abnormalFlag == " AN" ? "text-black" : "text-red-500"
-            }">
-                ${test.labResult}
-            </span>
-            <div class="text-base font-normal">${test.uom}</div>
-        </div>
-        <div class="flex flex-col  w-[8%]  justify-center">
-            <div class="h-6 flex justify-center">
-                ${test.deltaFlag ? deltaImg[`${test.deltaFlag}`] : ""}
-            </div>
-            <div class="text-xs h-3 flex justify-center font-medium">
-                ${test.deltaFlag ? `${test.deltaPer}` : ""}
-            </div>
-        </div>
+    <div class="test-report" data-index="${index}">
+       <div class="flex flex-col mb-1">
+          <div class="flex justify-between items-center bg-[#f0f6fb] px-2">
+             <div class="flex w-[40%] items-center gap-1">
+                <div>
+                      ${
+                         test.abnormalFlag
+                            ? abnormalImg[`${test.abnormalFlag}`]
+                            : ""
+                      }
+                </div>
+                <div class="text-[0.685rem] font-medium">
+                   ${test.testName}
+                </div>
+             </div>
+             <div class="flex flex-wrap gap-2 items-center w-[16%]  font-normal ml-1">
+                <span class=" font-medium text-sm  ${
+                   test.abnormalFlag == "AN" ? "text-black" : "text-red-500"
+                }">
+                      ${test.labResult}
+                </span>
+                <div class="text-[0.685rem] font-normal">
+                      ${test.uom}
+                </div>
+             </div>
+             <div class="flex flex-col w-[14%]  justify-center">
+                <div class="h-6 flex justify-center items-center">
+                      ${test.deltaFlag ? deltaImg[`${test.deltaFlag}`] : ""}
+                </div>
+                <div class="text-xs h-3 flex justify-center font-medium">
+                      ${test.deltaFlag ? `${test.deltaPer}` : ""}
+                </div>
+             </div>
  
  
-           <div class="w-[30%] pl-7">
-    
-           </div>
-        
+                <div class="w-[30%] pl-7">
+          
+                </div>
+             
  
  
+          </div>
+ 
+          <div class="flex flex-col bg-[#f4eaf5] rounded-b-md">
+             ${
+                test?.historical?.length > 1
+                   ? `
+                   <div class="flex justify-center">
+                            <div class="p-3 w-[800px] h-[180px] flex justify-center" id="chartContainer${
+                               index - 0 + 1
+                            }">
+                            </div>
+                   </div>
+             `
+                   : ""
+             } ${
+       test.diffDiagnosis
+          ? `
+                <div class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg">
+                   <div class="">
+                      <div class="flex w-full gap-2">
+                         
+                         <div class="   w-2/5  text-sm font-medium">
+                            Differential Diagnosis:
+                         </div>
+                         <div class="w-full text-sm">
+                            ${test?.diffDiagnosis}
+                         </div>
+                      </div>
+                   </div>
+ 
+                   ${
+                      test?.diffDiagnosisImg
+                         ? `
+                               <div class="">
+                                     <img src="${test?.diffDiagnosisImg}" class="w-80 h-80 rounded-lg" />
+                               </div>
+                   `
+                         : ""
+                   }
+                </div>
+             `
+          : ``
+    }
+ 
+             ${
+                test.interpretation
+                   ? `
+                      <div class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg">
+                         <div class="">
+                               <div class="flex w-full gap-2">
+                                  
+                                  <div class="   w-2/5  text-sm font-medium">
+                                     Interpretation:
+                                  </div>
+                                  <div class="w-full text-sm">
+                                     ${test?.interpretation}
+                                  </div>
+                               </div>
+                         </div>
+ 
+                         ${
+                            test?.interpretationImg
+                               ? `
+                                  <div class="">
+                                     <img
+                                        src="${test?.interpretationImg}"
+                                        class="w-80 h-80 rounded-lg"
+                                     />
+                                  </div>
+                         `
+                               : ""
+                         }
+                      </div>
+             `
+                   : ``
+             }
+          </div>
+       </div>
     </div>
- 
-    <div class="flex flex-col bg-[#f4eaf5] rounded-b-md">
-        ${
-           test?.historical?.length > 1
-              ? `
-        <div class="flex justify-center">
-            <div class="p-3 w-[800px] h-[200px] flex justify-center" id="chartContainer${
-               index - 0 + 1
-            }"></div>
-        </div>
-        `
-              : ""
-        } ${
-            test.diffDiagnosis
-               ? `
-        <div class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg">
-        <div class="">
-        <div class="flex w-full gap-2">
-           
-           <div class="   w-2/5  text-base font-medium">
-              Differential Diagnosis:
-           </div>
-           <div class="w-full ">${test?.diffDiagnosis}</div>
-        </div>
-     </div>
- 
-            ${
-               test?.diffDiagnosisImg
-                  ? `
-            <div class="">
-                <img src="${test?.diffDiagnosisImg}" class="w-80 h-80 rounded-lg" />
-            </div>
-            `
-                  : ""
-            }
-        </div>
-        `
-               : ``
-         }
- 
-         ${
-            test.interpretation
-               ? `
-        <div
-           class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg"
-        >
-           <div class="">
-              <div class="flex w-full gap-2">
-                 
-                 <div class="   w-2/5  text-base font-medium">
-                 Interpretation:
-                 </div>
-                 <div class="w-full ">${test?.interpretation}</div>
-              </div>
-           </div>
- 
-           ${
-              test?.interpretationImg
-                 ? `
-           <div class="">
-              <img
-                 src="${test?.interpretationImg}"
-                 class="w-80 h-80 rounded-lg"
-              />
-           </div>
-           `
-                 : ""
-           }
-        </div>
-        `
-               : ``
-         }
-    </div>
- </div>
- </div>
- `
- } `;
+ `;
  
     // });
  
@@ -708,23 +710,22 @@ function calculateHeaderHeight(data) {
  }
  
  function lineChartContent(
-    startPixel,
     startValue,
     endValue,
-    barLength,
-    inputValue
+    inputValue,
+    barLength = 122.88
  ) {
     if (inputValue < startValue) {
-       return 10;
+       return 0;
     } else if (inputValue > endValue) {
-       return 166;
+       return 155;
     }
  
     const unit = (endValue - startValue) / 0.1;
  
     const pixelPerUnit = barLength / unit;
  
-    return ((inputValue - startValue) / 0.1) * pixelPerUnit + 24;
+    return ((inputValue - startValue) / 0.1) * pixelPerUnit + 16;
  }
  
  function downloadPDF() {
