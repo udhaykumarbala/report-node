@@ -259,7 +259,6 @@ function calculateHeaderHeight(data) {
  function generateEmptyComponent(height) {
     // height = Math.ceil(Math.abs(height));
     height = Math.floor(Math.abs(height));
-    console.log("after-ceil", height);
     height = height <= 0.5 ? 0 : height;
  
     let emptyRows = "";
@@ -385,7 +384,7 @@ function calculateHeaderHeight(data) {
                                   </g>
                                </svg>
                             </div>
-                            <div class="flex gap-1">
+                            <div class="flex gap-0.5">
                                <div class="w-6  h-2 bg-red-600 rounded-l-lg"></div>
                                <div class="w-32  h-2 bg-green-800"></div>
                                <div class="w-6  h-2 bg-red-600 rounded-r-lg"></div>
@@ -442,27 +441,24 @@ function calculateHeaderHeight(data) {
                           <div
                              class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg"
                           >
-                             <div class="">
-                                <div class="flex w-full gap-2">
-                                   
-                                   <div class="   w-2/5  text-sm font-medium">
-                                      Differential Diagnosis:
-                                   </div>
-                                   <div class="w-full text-sm ">${
-                                      test?.diffDiagnosis
-                                   }</div>
-                                </div>
-                             </div>
+                               
+                                  <div class="w-full flex text-sm gap-2 ">
+                                     <span class="text-sm font-semibold">
+                                        Differential Diagnosis:
+                                     </span>
+                                     ${test?.diffDiagnosis}
+                                  </div>
+                                 
  
                              ${
                                 test?.diffDiagnosisImg
                                    ? `
-                             <div class="">
-                                <img
-                                   src="${test?.diffDiagnosisImg}"
-                                   class="w-80 h-80 rounded-lg"
-                                />
-                             </div>
+                               <div class="">
+                                  <img
+                                     src="${test?.diffDiagnosisImg}"
+                                     class="w-80 h-80 rounded-lg"
+                                  />
+                               </div>
                              `
                                    : ""
                              }
@@ -477,17 +473,12 @@ function calculateHeaderHeight(data) {
                           <div
                              class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg"
                           >
-                             <div class="">
-                                <div class="flex w-full gap-2">
-                                   
-                                   <div class="   w-2/5  text-sm font-medium">
-                                   Interpretation:
-                                   </div>
-                                   <div class="w-full text-sm">${
-                                      test?.interpretation
-                                   }</div>
-                                </div>
-                             </div>
+                                  <div class="w-full flex text-sm gap-2 ">
+                                     <span class="text-sm font-semibold">
+                                        Interpretation:
+                                     </span>
+                                     ${test?.interpretation}
+                                  </div>
  
                              ${
                                 test?.interpretationImg
@@ -641,16 +632,11 @@ function calculateHeaderHeight(data) {
        test.diffDiagnosis
           ? `
                 <div class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg">
-                   <div class="">
-                      <div class="flex w-full gap-2">
-                         
-                         <div class="   w-2/5  text-sm font-medium">
-                            Differential Diagnosis:
-                         </div>
-                         <div class="w-full text-sm">
-                            ${test?.diffDiagnosis}
-                         </div>
-                      </div>
+                   <div class="w-full flex text-sm gap-2 ">
+                      <span class="text-sm font-semibold">
+                         Differential Diagnosis:
+                      </span>
+                      ${test?.diffDiagnosis}
                    </div>
  
                    ${
@@ -671,16 +657,11 @@ function calculateHeaderHeight(data) {
                 test.interpretation
                    ? `
                       <div class="flex flex-col gap-4 p-3 mx-3 my-3 bg-white border-2 border-dotted border-violet-700 rounded-lg">
-                         <div class="">
-                               <div class="flex w-full gap-2">
-                                  
-                                  <div class="   w-2/5  text-sm font-medium">
-                                     Interpretation:
-                                  </div>
-                                  <div class="w-full text-sm">
-                                     ${test?.interpretation}
-                                  </div>
-                               </div>
+                         <div class="w-full flex text-sm gap-2 ">
+                            <span class="text-sm font-semibold">
+                               Interpretation:
+                            </span>
+                            ${test?.interpretation}
                          </div>
  
                          ${
