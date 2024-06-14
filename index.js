@@ -15,25 +15,22 @@ function jsonToHtml(json) {
 <head>
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-   <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+   <script src="./html2pdf.bundle.min.js"></script>
+   <script src="./html2canvas.js"></script>
 
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="./chart.js"></script>
 
-   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+   <script src="./chart.min.js"></script>
+   <script src="./chartjs-plugin-datalabels@2.0.0.js"></script>
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-      integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-   <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+   <script src="./2.4.0/jspdf.umd.min.js"></script>
+   <script src="./html2canvas.min.js"></script>
+   <script src="./jquery.min.js"></script>
+   <script src="./jspdf.umd.min.js"></script>
 
    <!-- <link rel="stylesheet" href="./dist/output.css" /> -->
-   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="./tailwind.js"></script>
    <script src="./report.js"></script>
-   <script src="../temp/pageSizeTest.js"></script>
    <title>Report Convertion Table</title>
 
    <style>
@@ -64,7 +61,7 @@ function jsonToHtml(json) {
    <script>
       //Fetch JSON data and insert it into the HTML content
 
-      let data = ${JSON.parse(json)};
+      let data = {};
       let count = "";
       const doc = document.getElementById("content");
 
@@ -157,6 +154,9 @@ function jsonToHtml(json) {
          }
       }
 
+      let headerData = ""
+      let reportData = ""
+
       document.addEventListener('DOMContentLoaded', function () {
          const jsonInput = ${json};
          let jsonData;
@@ -172,14 +172,14 @@ function jsonToHtml(json) {
          data = transformData(jsonData);
 
 
-         const headerData = data?.filter(item => item.componentType === "Row")
+         headerData = data?.filter(item => item.componentType === "Row")
             .flatMap(item =>
                item.children.filter(child => child.componentType === "col" || child.componentType === "image")
                   .map(child => child.children)
             );
 
          // Extract report data for "Report" components and their children
-         const reportData = data?.filter(item => item.componentType === "Report")
+         reportData = data?.filter(item => item.componentType === "Report")
             .map(item => item.children);
 
          // Log the generated HTML strings
@@ -188,33 +188,15 @@ function jsonToHtml(json) {
          const header = generate_header(headerData)
 
          const pdfData = generate_report(headerData, reportData, header)
+         // downloadPDF(headerData, reportData)
          // console.log("pdfData", pdfData)
 
-         // const dummy = generateWithoutBar({
-         //    height: 40,
-         //    "testName": "vijayvijayvijayvijayvijay vijayutsflty",
-         //    "labResult": "20",
-         //    "uom": "%",
-         //    "abnormalFlag": "",
-         //    "abnormalFromValue": 10,
-         //    "abnormalToValue": 50,
-         //    "deltaPer": 0,
-         //    "deltaFlag": "HR",
-         //    // "diffDiagnosis": "Diagnosis",
-         //    "diffDiagnosisImg": "",
-         //    "historical": [],
-         //    "key": "Name",
-         //    "value": "SERO PROFILE ",
-         //    "color": "red",
-         //    "icon": "./blood.png",
-         // })
+         
 
 
          const contentDiv = document.getElementById('content');
          contentDiv.innerHTML = pdfData;
-
-
-
+         // contentDiv.innerHTML = dummy;
 
          const years = [];
          const values = [];
@@ -296,14 +278,14 @@ function jsonToHtml(json) {
 
          headerHtml += flattenedHeaderData.map((item) => {
             if (item.componentType === "header-image") {
-               headerHeight += ((item.height * 297) / (10.3 * 100));
+               headerHeight += ((item.height * 297) / (11.2 * 100));
                // console.log("headerImage", headerHeight)
 
                return generateHeaderImageComponent(item.url, item.height);
             }
 
             if (item.componentType === "footer-image") {
-               headerHeight += ((item.height * 297) / (10.3 * 100));
+               headerHeight += ((item.height * 297) / (11.2 * 100));
             }
             return '';
 
@@ -337,7 +319,7 @@ function jsonToHtml(json) {
          headerHtml += '</div>';
 
 
-         headerHeight += calculateHeaderHeight(headerData) * 297 / (17 * 4) + 297 / 13.2
+         headerHeight += calculateHeaderHeight(headerData) * 297 / (17 * 4) + 297 / 15.5
          // console.log("headerHeight", headerHeight)
 
          return {
@@ -351,7 +333,7 @@ function jsonToHtml(json) {
          let html = "";
          let newHeight = 0;
          let footerHeight = 0
-         let pageHeight = 293;
+         let pageHeight = 297;
          let currentPageHeight = pageHeight - header.height
          // console.log("currentPageHeight", currentPageHeight);
 
@@ -381,26 +363,19 @@ function jsonToHtml(json) {
 
 
             let newHeight = currentPageHeight - componentHeight;
-            // console.log("newHeight", newHeight);
-
-            if (newHeight <= 0) {
-               html += generateEmptyComponent(currentPageHeight)
-               html += generatePageNoComponent(page);
-               html += footerData[1];
-               page++;
-
+            if (newHeight <= -4.5) {
+               html += generateEmptyComponent(1)
                currentPageHeight = pageHeight - header.height; // Reset the page height
                html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
-            }else if (item.componentType == "title"){ // check if title component is last component of the page and move it to the next page
+            }
+
+            if (newHeight > 0 && item.componentType == "title") { // check if title component is last component of the page and move it to the next page
                nextItem = flattenedReportData[idx + 1]
-               if (nextItem.componentType == "testReport") {
+               if (nextItem && nextItem.componentType == "testReport") {
                   nextComponentHeight = calculateComponentHeight(nextItem);
                   finalPageHeight = currentPageHeight - nextComponentHeight;
                   if (finalPageHeight <= 0) {
-                     html += generateEmptyComponent(currentPageHeight-10) // reduce 10 to avoid overlapping
-                     html += generatePageNoComponent(page);
-                     html += footerData[1];
-                     page++;
+                     html += generateEmptyComponent(1) // reduce 10 to avoid overlapping
                      currentPageHeight = pageHeight - header.height; // Reset the page height
                      html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
                   }
@@ -413,10 +388,7 @@ function jsonToHtml(json) {
 
          })
 
-         html += generateEmptyComponent(currentPageHeight)
-         html += generatePageNoComponent(page);
-         html += footerData[1];
-         page++;
+         html += generateEmptyComponent(1)
 
          return html
 
@@ -424,13 +396,39 @@ function jsonToHtml(json) {
 
       window.jsPDF = window.jspdf.jsPDF;
       $("#download").click(function () {
+         // console.log("download", headerData, reportData)
+         const flattenedHeaderData = headerData?.flat();
+         const flattenedReportData = reportData?.flat()
+
+         let headerValue = flattenedHeaderData.map((item) => {
+            if (item.componentType === "header-image") {
+               return { url: item.url, height: item.height, margin: item.margin }
+            }
+         }).filter(item => item !== undefined);
+
+         let footerValue = flattenedHeaderData.map((item) => {
+            if (item.componentType === "footer-image") {
+               // footerHeight += (item.height * 297) / (10.3 * 100);
+               return { url: item.url, height: item.height, margin: item.margin }
+
+
+            }
+         }).filter(item => item !== undefined);
+
+
+         const headerImageURL = headerValue[0].url; // Replace with your image URL
+         const headerHeight = (headerValue[0].height * 297) / (11.2 * 100); // Set the height of the header image
+
+         const footerImageURL = footerValue[0].url; // Replace with your image URL
+         const footerHeight = (footerValue[0].height * 297) / (11.2 * 100) + 297 / 69; // Set the height of the footer image
+
          let height = $("#content").height();
          let width = $("#content").width();
          html2pdf()
             .set({
                pagebreak: { after: '.pageBreak' },
                html2canvas: {
-                  scale: 2, // Increase scale for better resolution
+                  scale: 3, // Increase scale for better resolution
                   logging: true, // Enable logging for debugging
                   useCORS: true, // Use CORS to load images from different domains
                },
@@ -438,12 +436,72 @@ function jsonToHtml(json) {
                jsPDF: {
                   unit: "mm",
                   format: ["210", "297"],
+                  orientation: "portrait"
                },
             })
             .from(document.getElementById("content"))
+            .toPdf()
+            .get("pdf")
+            .then(function (pdf) {
+               const totalPages = pdf.internal.getNumberOfPages();
+               const pageWidth = pdf.internal.pageSize.getWidth();
+               const pageHeight = pdf.internal.pageSize.getHeight();
 
+
+               // const imageWidth = pageWidth - 20; // Adjust width as needed
+               // const imageHeight = footerHeight - 3; // Adjust height as needed
+               // const marginBottom = -1.5; // Adjust margin as needed
+               // const xOffset = (pageWidth - imageWidth) / 2; // Calculate x-offset for centering horizontally
+               // const yOffset = pageHeight - footerHeight + (footerHeight - imageHeight) / 2 + marginBottom; // Calculate y-offset for centering vertically within footer area
+               // Header image dimensions
+               const headerImageWidth = headerValue[0].margin ? pageWidth - 20 : pageWidth;
+               const headerImageHeight = headerHeight;
+               const headerMarginTop = 0;
+               const headerXOffset = (pageWidth - headerImageWidth) / 2;
+               const headerYOffset = headerMarginTop;
+
+               // Footer image dimensions
+               const footerImageWidth = footerValue[0].margin ? pageWidth - 20 : pageWidth;
+               const footerImageHeight = footerHeight;
+               const footerMarginBottom = 0;
+               const footerXOffset = (pageWidth - footerImageWidth) / 2;
+               const footerYOffset = pageHeight - footerImageHeight + footerMarginBottom;
+
+
+
+
+               // Loop through each page and add the footer image
+               for (let i = 1; i <= totalPages; i++) {
+                  // if (i == totalPages) {
+                  //    // remove the last page footer
+                  //    pdf.deletePage(i)
+                  //    continue
+                  // }
+                  pdf.setPage(i);
+                  pdf.setFontSize(8);
+                  pdf.setTextColor(0);
+                  //Add you content in place of example here
+                  // pdf.addImage(footerImageURL, 'PNG', xOffset, yOffset, imageWidth, imageHeight);
+
+                  // Add header image
+                  pdf.addImage(headerImageURL, 'PNG', headerXOffset, headerYOffset, headerImageWidth, headerImageHeight);
+
+                  // Add footer image
+                  pdf.addImage(footerImageURL, 'PNG', footerXOffset, footerYOffset, footerImageWidth, footerImageHeight);
+
+
+
+                  // Add page number
+                  const text = "Page " + i + " of "+ totalPages;
+                  const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.getFontSize(20) / pdf.internal.scaleFactor;
+                  const textX = (pageWidth - textWidth) - 10; // Adjust x-position as needed
+                  const textY = pageHeight - 30; // Adjust y-position as needed
+                  pdf.text(text, textX, textY);
+               }
+            })
             .save();
       });
+
    </script>
     `;
 }
@@ -507,12 +565,32 @@ app.post('/generate-pdf', async (req, res) => {
    const jsonObject = req.body;
    const JSONData = jsonObject.jsonData;
    const htmlString = jsonToHtml(JSON.stringify(JSONData));
+   console.log(htmlString);
 
    try {
-       const browser = await puppeteer.launch(
+       const browser = await puppeteer.launch({
+         headless: true,
+         defaultViewport: null,
+         executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+       }
        );
        const page = await browser.newPage();
-       await page.setContent(htmlString, { waitUntil: 'networkidle0' });
+       // console all requests made by the page
+       page.on('request', request => {
+         console.log('Request:', request.url());
+      });
+      // console all responses made by the page
+      page.on('response', response => {
+         console.log('Response:', response.url());
+      });
+      // console all console messages made by the page
+      page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+       await page.setContent(htmlString, { timeout: 50000, waitUntil: 'networkidle2',  });
+
+       
+       
+       // create a screenshot of the page
+         await page.screenshot({ path: 'screenshot.png' });
 
        // Intercept the request to receive the PDF data
        page.on('request', interceptedRequest => {
@@ -529,6 +607,7 @@ app.post('/generate-pdf', async (req, res) => {
 
        // Click the download button to trigger the PDF generation
        await page.click('#download');
+       console.log('Clicked download button');
 
        await page.waitForResponse(response => response.url().endsWith('/receive-pdf') && response.status() === 200);
        await browser.close();
