@@ -191,9 +191,6 @@ function jsonToHtml(json) {
          // downloadPDF(headerData, reportData)
          // console.log("pdfData", pdfData)
 
-         
-
-
          const contentDiv = document.getElementById('content');
          contentDiv.innerHTML = pdfData;
          // contentDiv.innerHTML = dummy;
@@ -363,7 +360,9 @@ function jsonToHtml(json) {
 
 
             let newHeight = currentPageHeight - componentHeight;
-            if (newHeight <= -4.5) {
+            console.log("newHeight", newHeight, item.componentType, componentHeight, currentPageHeight)
+            if (newHeight <= 0) {
+               console.log("new page")
                html += generateEmptyComponent(1)
                currentPageHeight = pageHeight - header.height; // Reset the page height
                html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
@@ -375,6 +374,7 @@ function jsonToHtml(json) {
                   nextComponentHeight = calculateComponentHeight(nextItem);
                   finalPageHeight = currentPageHeight - nextComponentHeight;
                   if (finalPageHeight <= 0) {
+                     console.log("new page due to title")
                      html += generateEmptyComponent(1) // reduce 10 to avoid overlapping
                      currentPageHeight = pageHeight - header.height; // Reset the page height
                      html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
@@ -388,7 +388,7 @@ function jsonToHtml(json) {
 
          })
 
-         html += generateEmptyComponent(1)
+         // html += generateEmptyComponent(1)
 
          return html
 
@@ -492,7 +492,7 @@ function jsonToHtml(json) {
 
 
                   // Add page number
-                  const text = "Page " + i + " of "+ totalPages;
+                  const text = "Page " + i + " of " + totalPages;
                   const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.getFontSize(20) / pdf.internal.scaleFactor;
                   const textX = (pageWidth - textWidth) - 10; // Adjust x-position as needed
                   const textY = pageHeight - 30; // Adjust y-position as needed

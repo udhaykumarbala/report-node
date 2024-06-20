@@ -15,7 +15,7 @@ function calculateComponentHeight(data) {
    const pageHeight = 297;
    let totalHeight = 0;
    if (data.componentType == "title") {
-      totalHeight += pageHeight / 30.3;
+      totalHeight += pageHeight / 28.3;
    } else if (data.componentType == "testReport") {
       if (data.abnormalFromValue === 0 && data.abnormalToValue === 0) {
          totalHeight += pageHeight / 28;
@@ -29,7 +29,7 @@ function calculateComponentHeight(data) {
          totalHeight += pageHeight / 4.7;
 
          const maxLineLength = 102;
-         const initialHeight = 5.31;
+         const initialHeight = 6.31;
 
          const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
 
