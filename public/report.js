@@ -29,30 +29,80 @@ function calculateComponentHeight(data) {
          totalHeight += pageHeight / 4.7;
 
          const maxLineLength = 102;
-         const initialHeight = 6.31;
+         const initialHeight = 5.01;
 
-         const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
+         // const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
 
-         if (lines > 1) {
-            totalHeight += (lines - 1) * initialHeight;
+         let splittedLines = data.diffDiagnosis.split("</br>");
+         // calculate the lines with maximum line length of the line for each splitted line
+         for (let i = 0; i < splittedLines.length; i++) {
+            const line = splittedLines[i];
+            const lineLength = line.length;
+            const lines = Math.ceil(lineLength / maxLineLength);
+            totalHeight += lines * initialHeight;
          }
+
+         // if (lines > 1) {
+         //    totalHeight += (lines - 1) * initialHeight;
+         // }
       } else if (data.diffDiagnosis) {
          totalHeight += pageHeight / 23.6;
 
          const maxLineLength = 102;
-         const initialHeight = 5.31;
+         const initialHeight = 5.01;
 
-         const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
+         // const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
 
-         if (lines > 1) {
-            totalHeight += (lines - 1) * initialHeight;
+         let splittedLines = data.diffDiagnosis.split("</br>");
+         // calculate the lines with maximum line length of the line for each splitted line
+         for (let i = 0; i < splittedLines.length; i++) {
+            const line = splittedLines[i];
+            const lineLength = line.length;
+            const lines = Math.ceil(lineLength / maxLineLength);
+            totalHeight += lines * initialHeight;
          }
+
+         // if (lines > 1) {
+         //    totalHeight += (lines - 1) * initialHeight;
+         // }
       }
 
       if (data.interpretation && data.interpretationImg) {
          totalHeight += pageHeight / 4.7;
+
+         const maxLineLength = 102;
+         const initialHeight = 5.01;
+
+         // const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
+
+         let splittedLines = data.diffDiagnosis.split("</br>");
+         // calculate the lines with maximum line length of the line for each splitted line
+         for (let i = 0; i < splittedLines.length; i++) {
+            const line = splittedLines[i];
+            const lineLength = line.length;
+            const lines = Math.ceil(lineLength / maxLineLength);
+            totalHeight += lines * initialHeight;
+         }
+         totalHeight -= initialHeight;
+
       } else if (data.interpretation) {
          totalHeight += pageHeight / 23.6;
+
+         const maxLineLength = 102;
+         const initialHeight = 5.01;
+
+         // const lines = Math.ceil(data.diffDiagnosis.length / maxLineLength);
+
+         let splittedLines = data.diffDiagnosis.split("</br>");
+         // calculate the lines with maximum line length of the line for each splitted line
+         for (let i = 0; i < splittedLines.length; i++) {
+            const line = splittedLines[i];
+            const lineLength = line.length;
+            const lines = Math.ceil(lineLength / maxLineLength);
+            totalHeight += lines * initialHeight;
+         }
+         totalHeight -= initialHeight;
+         
       }
 
       if (data.historical?.length > 1) {

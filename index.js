@@ -37,20 +37,41 @@ function jsonToHtml(json) {
       body {
          font-family: Poppins, sans-serif;
       }
+      #progressBar {
+         transform: width 0.2s ease;
+      }
+      #success {
+         transition: opacity 0.5s ease, display 0.5s ease;
+      }
    </style>
 </head>
 
 <body>
    <div class="container mx-auto p-3">
 
-      <h2 class="text-3xl font-bold text-center p-4">Test Report</h2>
+      <h2 class="text-3xl font-bold text-center p-4">Smart Report</h2>
 
       <div class="flex justify-center p-7 gap-10">
 
-         <button id="download" class="text-base text-white bg-sky-600 px-4 py-2 rounded-md">
-            Download PDF
+         <button id="download" class="text-base text-white bg-sky-600 px-4 py-2 rounded-md disabled:bg-sky-200">
+            Download as PDF
          </button>
       </div>
+
+      <div class="justify-center hidden" id="progress">
+         <div class="w-1/3">
+            <div class="inline-block mb-2 ms-[calc(0%-1.25rem)] py-0.5 px-1.5 bg-blue-50 border border-blue-200 text-xs font-medium text-blue-600 rounded-lg dark:bg-blue-800/30 dark:border-blue-800 dark:text-blue-500" id="progressText">0%</div>
+            <div class="flex w-full h-8 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="flex flex-col justify-center rounded-full overflow-hidden animate-pulse bg-gradient-to-r from-blue-500 to-green-500  text-xs text-white text-center whitespace-nowrap transition duration-500 dark:bg-blue-500" style="width: 0%" id="progressBar"></div>
+            </div>
+          </div>
+      </div>
+
+      <div id="success" class="justify-center hidden">
+         <p class="bg-green-700 text-white text-center w-1/3 p-4 rounded-full">PDF generated successfully</p>
+      </div>
+
+      
 
       <div id="content" class="px-10 w-[794px] h-[1123p] flex flex-col rounded-xl container mx-auto shadow-2xl"></div>
 
@@ -265,7 +286,7 @@ function jsonToHtml(json) {
          return newData;
       }
 
-      function generate_header(headerData) {
+      function generate_header(headerData, page = 1) {
          // console.log("headerData", headerData)
          const flattenedHeaderData = headerData.flat();
 
@@ -294,7 +315,9 @@ function jsonToHtml(json) {
 
          }
 
-         headerHtml += '<div class="grid grid-cols-5 gap-x-2 justify-items-between">';
+         let pageMargin = (page*0.4) + "px"
+
+         headerHtml += '<div class="grid grid-cols-5 gap-x-2 justify-items-between m-['+pageMargin+']">';
 
          // console.log("FlatData", flatKVPair)
 
@@ -360,9 +383,9 @@ function jsonToHtml(json) {
 
 
             let newHeight = currentPageHeight - componentHeight;
-            console.log("newHeight", newHeight, item.componentType, componentHeight, currentPageHeight)
             if (newHeight <= 0) {
-               console.log("new page")
+               page++
+               header = generate_header(headerData, page)
                html += generateEmptyComponent(1)
                currentPageHeight = pageHeight - header.height; // Reset the page height
                html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
@@ -372,11 +395,12 @@ function jsonToHtml(json) {
                nextItem = flattenedReportData[idx + 1]
                if (nextItem && nextItem.componentType == "testReport") {
                   nextComponentHeight = calculateComponentHeight(nextItem);
-                  finalPageHeight = currentPageHeight - nextComponentHeight;
+                  finalPageHeight = newHeight - nextComponentHeight;
                   if (finalPageHeight <= 0) {
-                     console.log("new page due to title")
+                     page++
                      html += generateEmptyComponent(1) // reduce 10 to avoid overlapping
                      currentPageHeight = pageHeight - header.height; // Reset the page height
+                     header = generate_header(headerData, page)
                      html += header.html + generateTestReportHeaderComponent(); // Add header for the new page
                   }
                }
@@ -394,9 +418,22 @@ function jsonToHtml(json) {
 
       }
 
+      function progressUpdate(percentage) {
+         const progressText = document.getElementById("progressText");
+         const progressBar = document.getElementById("progressBar");
+
+         progressText.textContent = percentage + "%";
+         progressText.style.marginInlineStart = "calc(" + percentage + "% - 1.25rem)";
+         progressBar.style.width = percentage + "%";
+      }
+
       window.jsPDF = window.jspdf.jsPDF;
       $("#download").click(function () {
          // console.log("download", headerData, reportData)
+         $("#download").attr("disabled", true);
+         
+         $("#progress").removeClass("hidden").addClass("flex");
+         
          const flattenedHeaderData = headerData?.flat();
          const flattenedReportData = reportData?.flat()
 
@@ -414,6 +451,7 @@ function jsonToHtml(json) {
 
             }
          }).filter(item => item !== undefined);
+         progressUpdate(5);         
 
 
          const headerImageURL = headerValue[0].url; // Replace with your image URL
@@ -424,13 +462,21 @@ function jsonToHtml(json) {
 
          let height = $("#content").height();
          let width = $("#content").width();
+         progressUpdate(10);
+         FakeNumber = 10;
+         const FakeProgress = setInterval(() => {
+            FakeNumber += 5;
+            progressUpdate(FakeNumber);
+            console.log(FakeNumber);
+         }, 500);
+         
          html2pdf()
             .set({
                pagebreak: { after: '.pageBreak' },
                html2canvas: {
                   scale: 3, // Increase scale for better resolution
-                  logging: true, // Enable logging for debugging
-                  useCORS: true, // Use CORS to load images from different domains
+                  logging: false, // Enable logging for debugging
+                  useCORS: false, // Use CORS to load images from different domains
                },
                filename: "report.pdf",
                jsPDF: {
@@ -446,7 +492,7 @@ function jsonToHtml(json) {
                const totalPages = pdf.internal.getNumberOfPages();
                const pageWidth = pdf.internal.pageSize.getWidth();
                const pageHeight = pdf.internal.pageSize.getHeight();
-
+               clearInterval(FakeProgress);
 
                // const imageWidth = pageWidth - 20; // Adjust width as needed
                // const imageHeight = footerHeight - 3; // Adjust height as needed
@@ -466,9 +512,10 @@ function jsonToHtml(json) {
                const footerMarginBottom = 0;
                const footerXOffset = (pageWidth - footerImageWidth) / 2;
                const footerYOffset = pageHeight - footerImageHeight + footerMarginBottom;
+               progressUpdate(50);
 
-
-
+               let totalPageGenarationProgress = 40;
+               let progressPerPage = totalPageGenarationProgress / totalPages;
 
                // Loop through each page and add the footer image
                for (let i = 1; i <= totalPages; i++) {
@@ -477,6 +524,7 @@ function jsonToHtml(json) {
                   //    pdf.deletePage(i)
                   //    continue
                   // }
+                  progressUpdate(50 + progressPerPage * i);
                   pdf.setPage(i);
                   pdf.setFontSize(8);
                   pdf.setTextColor(0);
@@ -490,7 +538,6 @@ function jsonToHtml(json) {
                   pdf.addImage(footerImageURL, 'PNG', footerXOffset, footerYOffset, footerImageWidth, footerImageHeight);
 
 
-
                   // Add page number
                   const text = "Page " + i + " of " + totalPages;
                   const textWidth = pdf.getStringUnitWidth(text) * pdf.internal.getFontSize(20) / pdf.internal.scaleFactor;
@@ -498,6 +545,22 @@ function jsonToHtml(json) {
                   const textY = pageHeight - 30; // Adjust y-position as needed
                   pdf.text(text, textX, textY);
                }
+
+               progressUpdate(100);
+               setTimeout(() => {
+                  $("#progress").addClass("hidden").removeClass("flex");
+                  $("#success").removeClass("hidden").addClass("flex");
+                  $("#success").opacity = 1;
+                  $("#download").attr("disabled", false);
+               }, 500);
+
+               setTimeout(() => {
+                  $("#success").opacity = 0;
+                  }, 2000);
+
+               setTimeout(() => {
+                  $("#success").addClass("hidden").removeClass("flex");
+                  }, 2500);
             })
             .save();
       });
